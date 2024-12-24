@@ -27,10 +27,10 @@ func main() {
 
 func fetchAndDisplayAllMembers() error {
 	fetchers := []Fetcher{
-		&Gryffindor{Data: []string{"Harry", "Ron", "Hermione"}},
-		&Slytherin{Data: []string{"Draco", "Crabbe", "Goyle"}},
-		&Ravenclaw{Data: []string{"Luna", "Cho", "Padma"}},
-		&Hufflepuff{Data: []string{"Cedric", "Nymphadora", "Teddy"}},
+		NewGryffindor(),
+		NewSlytherin(),
+		NewRavenclaw(),
+		NewHufflepuff(),
 	}
 
 	for _, fetcher := range fetchers {

@@ -6,6 +6,10 @@ type Gryffindor struct {
 	Data []string
 }
 
+func NewGryffindor() *Gryffindor {
+	return &Gryffindor{Data: []string{"Harry", "Ron", "Hermione"}}
+}
+
 func (s *Gryffindor) GetSourceName() string {
 	return reflect.TypeOf(s).String()
 }

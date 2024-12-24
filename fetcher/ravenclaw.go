@@ -6,6 +6,10 @@ type Ravenclaw struct {
 	Data []string
 }
 
+func NewRavenclaw() *Ravenclaw {
+	return &Ravenclaw{Data: []string{"Luna", "Cho", "Padma"}}
+}
+
 func (s *Ravenclaw) GetSourceName() string {
 	return reflect.TypeOf(s).String()
 }

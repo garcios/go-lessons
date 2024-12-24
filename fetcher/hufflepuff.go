@@ -9,6 +9,10 @@ type Hufflepuff struct {
 	Data []string
 }
 
+func NewHufflepuff() *Hufflepuff {
+	return &Hufflepuff{Data: []string{"Cedric", "Nymphadora", "Teddy"}}
+}
+
 func (s *Hufflepuff) GetSourceName() string {
 	return reflect.TypeOf(s).String()
 }
