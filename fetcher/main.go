@@ -4,8 +4,9 @@ import (
 	"fmt"
 )
 
+// Fetcher defines the two methods we need to fetch members for each house.
 type Fetcher interface {
-	GetByID(int) (string, error)
+	GetAll() ([]string, error)
 	GetSourceName() string
 }
 
@@ -17,6 +18,14 @@ var _ Fetcher = (*Slytherin)(nil)
 
 func main() {
 
+	err := fetchAndDisplayAllMembers()
+	if err != nil {
+		fmt.Printf("Error: %s\n", err.Error())
+	}
+
+}
+
+func fetchAndDisplayAllMembers() error {
 	fetchers := []Fetcher{
 		&Gryffindor{Data: []string{"Harry", "Ron", "Hermione"}},
 		&Slytherin{Data: []string{"Draco", "Crabbe", "Goyle"}},
@@ -24,18 +33,16 @@ func main() {
 		&Hufflepuff{Data: []string{"Cedric", "Nymphadora", "Teddy"}},
 	}
 
-	// assume we know the IDs
-	IDs := []int{0, 1, 2}
-
 	for _, fetcher := range fetchers {
-		for _, id := range IDs {
-			ret, err := fetcher.GetByID(id)
-			if err != nil {
-				fmt.Printf("Error fetching by id %d: %v\n", id, err)
-				return
-			}
-			fmt.Printf("%s, Fetched with id %d: %s\n", fetcher.GetSourceName(), id, ret)
+		results, err := fetcher.GetAll()
+		if err != nil {
+			return fmt.Errorf("GetAll error: %v\n", err)
+		}
+
+		for _, result := range results {
+			fmt.Printf("%s, Fetched member: %s\n", fetcher.GetSourceName(), result)
 		}
 	}
 
+	return nil
 }

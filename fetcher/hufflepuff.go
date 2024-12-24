@@ -1,6 +1,9 @@
 package main
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+)
 
 type Hufflepuff struct {
 	Data []string
@@ -15,5 +18,7 @@ func (s *Hufflepuff) GetByID(id int) (string, error) {
 }
 
 func (s *Hufflepuff) GetAll() ([]string, error) {
-	return s.Data, nil
+	// return s.Data, nil
+	// This demonstrate an error scenario.
+	return nil, fmt.Errorf("%s: unable to fetch members", s.GetSourceName())
 }
