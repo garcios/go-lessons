@@ -19,12 +19,42 @@ type MyInterface interface{
 }
 ```
 2. Minimal interface: Instead of creating large monolithic interfaces, Go encourages the creation of minimal interfaces 
-(i.e., interfaces with the smallest possible number of methods). This again aligns with the point above and follows the Go proverb of "The bigger the interface, the weaker the abstraction."
+(i.e., interfaces with the smallest possible number of methods). This again aligns with the point above and follows the 
+Go proverb of "The bigger the interface, the weaker the abstraction."
 
 3. Multiple small files vs. One large file: In Go, it is common to separate different things into different files. 
 This can be different types, different interfaces, different functions, etc. It can be useful to separate interfaces 
 into their own files named for what the interface represents. The package tree can give you a good idea of what 
 interfaces are available without having to open a single huge file.
+
+## Checking interface compliance
+
+In Go, unlike some other languages such as Java or C#, there's no explicit declaration of implements keyword that 
+connects an interface with its implementing struct. Instead, you can just create a struct with methods that match the 
+interface signature - and the struct will implicitly satisfy the interface.
+
+The given line of code.
+```go
+var _ Fetcher = (*Gryffindor)(nil)
+```
+is checking at compile-time that the type *Gryffindor satisfies the Fetcher interface. If *Gryffindor does not satisfy 
+the Fetcher interface, the code will not compile.
+
+This declaration does not create a usable variable and underscore _ is a write-only variable in Go that's used when 
+syntax requires a variable name but program logic does not.
+
+So, the above code doesn't do anything functional at runtime, but it helps you to ensure correct code at compile time.
+
+As for the provided code snippets:
+
+1. Fetcher interface is defined with two methods, GetAll() and GetSourceName().
+2. Gryffindor struct is defined and it implements GetSourceName and GetAll methods, plus two additional methods 
+   GetByID and GetHouseHead.
+
+Noting, that these additional functions do not disrupt the fact that Gryffindor is a Fetcher.
+
+Remember that in Go, a type does not have to implement all (and only) the methods of an interface to satisfy it, 
+it needs to implement at least those, hence the Gryffindor structure still satisfies the Fetcher interface.
 
 ## Instructions
 ```shell
