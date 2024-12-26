@@ -28,11 +28,7 @@ func FormatCurrency(value float64) string {
 	s = strings.Join(reverse(parts), ",")
 
 	// Add decimal part
-	if fracPart > 0 {
-		s = s + fmt.Sprintf(".%02d", fracPart)
-	} else {
-		s = s + ".00"
-	}
+	s = s + fmt.Sprintf(".%02d", fracPart)
 
 	return "$" + s
 }
