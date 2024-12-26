@@ -71,7 +71,7 @@ func getMonthlyBalance(input *InputData) []Balance {
 		interest := startBalance * ratePerPeriod
 		endingBalance := startBalance + interest + input.ContributionPerPeriod
 		balances = append(balances,
-			Balance{Period: (i + 1) / 12, StartingBalance: startBalance, InterestEarned: interest, EndingBalance: endingBalance})
+			Balance{Period: i + 1, StartingBalance: startBalance, InterestEarned: interest, EndingBalance: endingBalance})
 
 		startBalance = endingBalance
 	}
