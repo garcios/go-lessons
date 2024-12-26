@@ -5,6 +5,7 @@ import (
 	"github.com/oskiegarcia/investment/calc"
 	"github.com/oskiegarcia/investment/input"
 	"github.com/oskiegarcia/investment/output"
+	"github.com/oskiegarcia/investment/utils"
 )
 
 func main() {
@@ -20,7 +21,10 @@ func main() {
 	input.CompoundingPerPeriod = compoundingPerPeriod
 
 	futureValue := calc.ComputeFutureValue(input)
-	fmt.Printf("\nThe future value of %.2f after %.2f years is %.2f\n", input.PresentValue, input.Years, futureValue)
+	fmt.Printf("\nThe future value of %s after %d years is %s\n",
+		utils.FormatCurrency(input.PresentValue),
+		int(input.Years),
+		utils.FormatCurrency(futureValue))
 
 	output.PrintHeader()
 	balances := calc.GetMonthlyBalance(input)
