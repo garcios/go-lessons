@@ -36,7 +36,7 @@ func Accept() (*calc.InputData, error) {
 }
 
 func prompt(name string) (float64, error) {
-	fmt.Printf("Please enter the %s: ", name)
+	fmt.Printf("%s: ", name)
 
 	var input float64
 	_, err := fmt.Scanln(&input)
