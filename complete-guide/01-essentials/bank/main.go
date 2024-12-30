@@ -24,14 +24,11 @@ const (
 const AccountFilename = "balance.txt"
 
 func main() {
-	account := &Account{Balance: 0}
-	balance, err := readBalanceFromFile()
+	account, err := getAccount()
 	if err != nil {
 		displayError(err)
 		return
 	}
-
-	account.Balance = balance
 
 	fmt.Println("Welcome to Go Bank!")
 	fmt.Println()
@@ -63,6 +60,15 @@ func main() {
 		}
 
 	}
+}
+
+func getAccount() (*Account, error) {
+	balance, err := readBalanceFromFile()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Account{Balance: balance}, nil
 }
 
 func writeBalanceToFile(balance float64) error {
