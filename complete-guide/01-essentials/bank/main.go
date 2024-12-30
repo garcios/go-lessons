@@ -1,13 +1,24 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 )
 
 type Account struct {
 	Balance float64
 }
+
+// Use constants to avoid using magic number in the code - this improves readability.
+const (
+	ActionGetBalance = iota + 1
+	ActionDeposit
+	ActionWithdraw
+	ActionExit
+)
 
 func main() {
 	account := &Account{Balance: 1000.0}
@@ -20,17 +31,11 @@ func main() {
 
 		choice, err := getChosen()
 		if err != nil {
-			fmt.Println(err.Error())
-			continue
-		}
-
-		err = validateInput(choice)
-		if err != nil {
 			displayError(err)
 			continue
 		}
 
-		if choice == 4 {
+		if choice == ActionExit {
 			fmt.Println()
 			fmt.Println("Thanks for banking with us!")
 			break
@@ -49,33 +54,26 @@ func displayError(err error) {
 	fmt.Printf("Error: %s\n", err.Error())
 }
 
-func validateInput(choice int) error {
-	if choice < 0 || choice > 4 {
-		return fmt.Errorf("invalid choice %d", choice)
-	}
-
-	return nil
-}
-
 func do(action int, account *Account) error {
 	switch action {
-	case 1:
+	case ActionGetBalance:
 		fmt.Printf("You have a current balance of %.2f\n", account.GetBalance())
-	case 2:
+	case ActionDeposit:
 		fmt.Print("Enter amount to deposit: ")
-		var amount float64
-		_, err := fmt.Scanf("%f", &amount)
+		amount, err := scanFloat64()
 		if err != nil {
 			return err
 		}
 
-		account.Deposit(amount)
+		err = account.Deposit(amount)
+		if err != nil {
+			return err
+		}
 
 		fmt.Printf("You have an updated balance of %.2f\n", account.GetBalance())
-	case 3:
+	case ActionWithdraw:
 		fmt.Print("Enter amount to withdraw: ")
-		var amount float64
-		_, err := fmt.Scanf("%f", &amount)
+		amount, err := scanFloat64()
 		if err != nil {
 			return err
 		}
@@ -86,18 +84,70 @@ func do(action int, account *Account) error {
 		}
 
 		fmt.Printf("You have an updated balance of %.2f\n", account.GetBalance())
+	default:
+		return fmt.Errorf("invalid choice %d", action)
 	}
 
 	return nil
 }
 
-func (a *Account) Deposit(money float64) {
+func scanFloat64() (float64, error) {
+	var (
+		amount float64
+		err    error
+	)
+
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		s := scanner.Text()
+		amount, err = strconv.ParseFloat(s, 64)
+		if err != nil {
+			return 0, fmt.Errorf("error parsing input: %s", err)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return 0, fmt.Errorf("error scanning input: %s", err)
+	}
+
+	return amount, nil
+}
+
+func scanInt() (int, error) {
+	var (
+		number int
+		err    error
+	)
+
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		s := scanner.Text()
+		number, err = strconv.Atoi(s)
+		if err != nil {
+			return 0, fmt.Errorf("error parsing input: %s", err)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return 0, fmt.Errorf("error scanning input: %s", err)
+	}
+
+	return number, nil
+}
+
+func (a *Account) Deposit(money float64) error {
+	if money <= 0 {
+		return fmt.Errorf("invalid amount. Deposit amount %.2f must be greater than zero ", money)
+	}
+
 	a.Balance += money
+
+	return nil
 }
 
 func (a *Account) Withdraw(money float64) error {
 	if a.Balance < money {
-		return fmt.Errorf("your balance is lower than %.2f", money)
+		return fmt.Errorf("invalid amount. Amount %.2f must be equal or less than current balance", money)
 	}
 
 	a.Balance -= money
@@ -110,9 +160,8 @@ func (a *Account) GetBalance() float64 {
 }
 
 func getChosen() (int, error) {
-	var choice int
 	fmt.Print("Your choice: ")
-	_, err := fmt.Scan(&choice)
+	choice, err := scanInt()
 	if err != nil {
 		return 0, fmt.Errorf("invalid choice: %s", err.Error())
 	}
