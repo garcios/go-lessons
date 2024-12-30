@@ -21,7 +21,14 @@ const (
 )
 
 func main() {
-	account := &Account{Balance: 1000.0}
+	account := &Account{Balance: 0}
+	balance, err := readBalanceFromFile()
+	if err != nil {
+		fmt.Println("Error reading balance from file:", err)
+		return
+	}
+
+	account.Balance = balance
 
 	fmt.Println("Welcome to Go Bank!")
 	fmt.Println()
@@ -36,6 +43,11 @@ func main() {
 		}
 
 		if choice == ActionExit {
+			if err := writeBalanceToFile(account.Balance); err != nil {
+				displayError(err)
+				return
+			}
+
 			fmt.Println()
 			fmt.Println("Thanks for banking with us!")
 			break
@@ -50,6 +62,28 @@ func main() {
 	}
 }
 
+func writeBalanceToFile(balance float64) error {
+	balanceText := fmt.Sprintf("%f", balance)
+	err := os.WriteFile("balances.txt", []byte(balanceText), 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func readBalanceFromFile() (float64, error) {
+	data, err := os.ReadFile("balances.txt")
+	if err != nil {
+		return 0, fmt.Errorf("error reading balance file: %s", err)
+	}
+	balance, err := strconv.ParseFloat(string(data), 64)
+	if err != nil {
+		return 0, fmt.Errorf("error parsing balance: %s", err)
+	}
+	return balance, nil
+}
+
 func displayError(err error) {
 	fmt.Printf("Error: %s\n", err.Error())
 }
@@ -57,7 +91,11 @@ func displayError(err error) {
 func do(action int, account *Account) error {
 	switch action {
 	case ActionGetBalance:
-		fmt.Printf("You have a current balance of %.2f\n", account.GetBalance())
+		balance, err := account.GetBalance()
+		if err != nil {
+			return err
+		}
+		fmt.Printf("You have a current balance of %.2f\n", balance)
 	case ActionDeposit:
 		fmt.Print("Enter amount to deposit: ")
 		amount, err := scanFloat64()
@@ -70,7 +108,11 @@ func do(action int, account *Account) error {
 			return err
 		}
 
-		fmt.Printf("You have an updated balance of %.2f\n", account.GetBalance())
+		balance, err := account.GetBalance()
+		if err != nil {
+			return err
+		}
+		fmt.Printf("You have an updated balance of %.2f\n", balance)
 	case ActionWithdraw:
 		fmt.Print("Enter amount to withdraw: ")
 		amount, err := scanFloat64()
@@ -83,7 +125,12 @@ func do(action int, account *Account) error {
 			return err
 		}
 
-		fmt.Printf("You have an updated balance of %.2f\n", account.GetBalance())
+		balance, err := account.GetBalance()
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("You have an updated balance of %.2f\n", balance)
 	default:
 		return fmt.Errorf("invalid choice %d", action)
 	}
@@ -155,8 +202,8 @@ func (a *Account) Withdraw(money float64) error {
 	return nil
 }
 
-func (a *Account) GetBalance() float64 {
-	return a.Balance
+func (a *Account) GetBalance() (float64, error) {
+	return a.Balance, nil
 }
 
 func getChosen() (int, error) {
