@@ -27,8 +27,7 @@ const AccountFilename = "balance.txt"
 func main() {
 	account, err := getAccount()
 	if err != nil {
-		displayError(err)
-		return
+		panic(err)
 	}
 
 	fmt.Println("Welcome to Go Bank!")
