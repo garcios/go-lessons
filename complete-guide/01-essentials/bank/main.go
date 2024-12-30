@@ -1,13 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Account struct {
 	Balance float64
 }
 
 func main() {
-
 	account := &Account{Balance: 1000.0}
 
 	fmt.Println("Welcome to Go Bank!")
@@ -38,10 +40,8 @@ func main() {
 		if err != nil {
 			displayError(err)
 			continue
-		} else {
-			fmt.Println("Transaction was successful!")
-			fmt.Println("------------------------")
 		}
+
 	}
 }
 
@@ -60,7 +60,7 @@ func validateInput(choice int) error {
 func do(action int, account *Account) error {
 	switch action {
 	case 1:
-		fmt.Printf("You have a balance of %.2f\n", account.GetBalance())
+		fmt.Printf("You have a current balance of %.2f\n", account.GetBalance())
 	case 2:
 		fmt.Print("Enter amount to deposit: ")
 		var amount float64
@@ -70,6 +70,8 @@ func do(action int, account *Account) error {
 		}
 
 		account.Deposit(amount)
+
+		fmt.Printf("You have an updated balance of %.2f\n", account.GetBalance())
 	case 3:
 		fmt.Print("Enter amount to withdraw: ")
 		var amount float64
@@ -78,7 +80,12 @@ func do(action int, account *Account) error {
 			return err
 		}
 
-		return account.Withdraw(amount)
+		err = account.Withdraw(amount)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("You have an updated balance of %.2f\n", account.GetBalance())
 	}
 
 	return nil
@@ -114,6 +121,7 @@ func getChosen() (int, error) {
 }
 
 func showMenu() {
+	fmt.Println(strings.Repeat("-", 50))
 	fmt.Println("What do you want to do?")
 	fmt.Println("1. Check balance")
 	fmt.Println("2. Deposit money")
