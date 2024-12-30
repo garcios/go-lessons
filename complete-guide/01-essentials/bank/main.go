@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -71,11 +72,13 @@ func getAccount() (*Account, error) {
 	return &Account{Balance: balance}, nil
 }
 
+// Writes to a file, creates the file if it does not exist.
+// It truncates contents of the file if already exists.
 func writeBalanceToFile(balance float64) error {
 	balanceText := fmt.Sprintf("%f", balance)
 	err := os.WriteFile(AccountFilename, []byte(balanceText), 0644)
 	if err != nil {
-		return err
+		return errors.New("could not write balance")
 	}
 
 	return nil
@@ -84,12 +87,14 @@ func writeBalanceToFile(balance float64) error {
 func readBalanceFromFile() (float64, error) {
 	data, err := os.ReadFile(AccountFilename)
 	if err != nil {
-		return 0, fmt.Errorf("error reading balance file: %s", err)
+		return 0, errors.New("could not read balance")
 	}
+
 	balance, err := strconv.ParseFloat(string(data), 64)
 	if err != nil {
-		return 0, fmt.Errorf("error parsing balance: %s", err)
+		return 0, errors.New("could not convert balance to float")
 	}
+
 	return balance, nil
 }
 
