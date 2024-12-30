@@ -13,6 +13,7 @@ type Account struct {
 }
 
 // Use constants to avoid using magic number in the code - this improves readability.
+// Constants for actions.
 const (
 	ActionGetBalance = iota + 1
 	ActionDeposit
@@ -20,11 +21,13 @@ const (
 	ActionExit
 )
 
+const AccountFilename = "balance.txt"
+
 func main() {
 	account := &Account{Balance: 0}
 	balance, err := readBalanceFromFile()
 	if err != nil {
-		fmt.Println("Error reading balance from file:", err)
+		displayError(err)
 		return
 	}
 
@@ -64,7 +67,7 @@ func main() {
 
 func writeBalanceToFile(balance float64) error {
 	balanceText := fmt.Sprintf("%f", balance)
-	err := os.WriteFile("balances.txt", []byte(balanceText), 0644)
+	err := os.WriteFile(AccountFilename, []byte(balanceText), 0644)
 	if err != nil {
 		return err
 	}
@@ -73,7 +76,7 @@ func writeBalanceToFile(balance float64) error {
 }
 
 func readBalanceFromFile() (float64, error) {
-	data, err := os.ReadFile("balances.txt")
+	data, err := os.ReadFile(AccountFilename)
 	if err != nil {
 		return 0, fmt.Errorf("error reading balance file: %s", err)
 	}
