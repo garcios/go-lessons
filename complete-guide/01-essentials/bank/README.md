@@ -4,15 +4,27 @@ This is a banking application that handles the following functionalities:
 - Deposit amount
 - Withdraw amount
 
-## Exception handling
+## Error handling
 In general, if a function returns multiple values, the last value will be an error object.
+Error is handled by checking whether the returned err value is not nil.
 
 e.g.
 ```go
+
+func main() 
+{
+  account, err := getAccount()
+  if err != nil {
+    fmt.Printf("Error: %v", err)
+  }
+	
+}
+
 func getAccount() (*Account, error)
 {
 	return nil, errors.New("An error occurred!")
 }
+
 ```
 ### fmt.Errorf vs errors.New
 Both fmt.Errorf and errors.New are used to create a new error, but they are used in slightly different scenarios.
@@ -98,7 +110,7 @@ Wrapping errors allows you to add context information to the error while still b
 specific error. In the above example, originalErr is wrapped with additional context information "operation failed: ",
 but you can still use errors.Is to check if an error is originalErr.
 
-### Panic
+### Panic function
 
 The panic function in Go language is a built-in function that is used to abort the flow of control and start panicking.
 When the panic function is called, the normal execution of the program is stopped and the function starts to collapse 
@@ -127,3 +139,42 @@ One of the important things to know about using panic is that any deferred funct
 program crashes. This is very useful for cleanup activities. However, in general, it's considered good practice to use 
 panic judiciously and resort to error handling mechanisms for most error situations.
 
+### Recover function
+The recover function is used to regain control of a panicking goroutine.
+
+recover is a built-in function that regains control of a panicking goroutine. When called within a deferred function, 
+recover stops the panicking sequence and restores normal execution.
+
+Here is the function signature:
+```go
+func recover() interface{}
+```
+
+If recover is called directly as part of the normal execution (not in deferred function or after panic sequence has 
+started), it doesn't do anything and returns nil.
+
+he standard way to use recover is in a deferred function within the same goroutine that's executing the panic sequence. 
+Here's an example:
+```go
+func main() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered from", r)
+        }
+    }()
+    
+    fmt.Println("Start")
+    panic("Something bad happened")
+    fmt.Println("End")  // This will not still be reached because of the panic
+}
+```
+
+In this example, the recover function is being called within a deferred function. If a panic happened somewhere in the 
+code (in this case, just one line after the defer), the deferred function would be executed during the panic sequence, 
+recover would stop the panic, executing immediately after the call to panic. After recovery, the program terminates 
+normally and the "End" line is still not reached since it's unreachable after a panic.
+
+It's important to note that recovering from a panic is not the same as handling an error. A panic generally indicates a
+major fault in the program that cannot be easily recovered without risking further errors, and is usually used for 
+preventing the program from running into a possibly invalid state. Errors, on the other hand, are a more graceful way of
+handling and notifying about abnormal situations in the program flow.

@@ -25,6 +25,12 @@ const (
 const AccountFilename = "balance.txt"
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+
 	account, err := getAccount()
 	if err != nil {
 		panic(err)
