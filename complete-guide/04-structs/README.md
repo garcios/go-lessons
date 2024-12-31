@@ -182,3 +182,21 @@ f = c // Compiler error: cannot use c (type Celsius) as type Fahrenheit in assig
 ```
 The alias type only lasts for the scope in which it was declared, so it only works throughout the package if it was 
 declared in the package scope.
+
+## Struct tags
+Struct tags are special metadata strings associated with the struct fields. They are defined within the struct 
+declaration and are written in the form of key-value pairs inside "`" backticks. They allow you to set additional 
+information about the struct fields for various purposes such as encoding/decoding JSON, XML, or other formats, as well
+as for validation, documentation, or to allow certain libraries to function properly with the struct.
+
+```go
+type Employee struct {
+    Name   string `json:"name"`
+    Salary float64    `json:"salary"`
+}
+```
+In this example, the tags json:"name" and json:"salary" are used to specify the JSON keys mapped to the Name and Salary
+fields respectively. When this struct is encoded to JSON, the fields will be represented with the names specified in 
+the struct tags. Similarly, when it is decoded from JSON, the JSON keys will map to the corresponding struct fields as 
+specified by the struct tags.
+

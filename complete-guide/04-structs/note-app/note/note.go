@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Note uses struct tags for the json output.
 type Note struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
