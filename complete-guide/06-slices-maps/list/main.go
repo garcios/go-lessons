@@ -5,11 +5,14 @@ func main() {
 	//array()
 
 	// Slice - has dynamic number of elements
-	slice()
+	//slice()
 
 	// creating a nil slice or using make
 	//creation()
 
 	// print memory address as slice grows
 	//growingList()
+
+	// iterate over list
+	iterate()
 }
