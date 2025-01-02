@@ -8,6 +8,41 @@ Here is the basic syntax to declare a map:
 var mapName map[keyType]valueType
 ```
 
+## Creation
+In Go, maps can be created in two ways - using make and using a map literal.
+Here are the differences between the two:
+
+1. Using make:
+```go
+m := make(map[string]string)
+```
+- The make function creates a map with no entries.
+- It allocates and initializes a hash map data structure and returns a map value that points to it.
+- The map is ready to accept key-entry values.
+- It can also take a second, optional argument: a hint to the number of entries the map will hold, which helps in 
+optimizing the memory allocation.
+```go
+m := make(map[string]string, 10)
+```
+
+2. Using a map literal:
+```go
+m := map[string]string{}
+```
+- A map literal allows a map to be created and initialized in the same line.
+- A map literal has an underlying array and creates an entry for each key-entry pair. In the above case, there are no 
+entries as it is an empty map literal.
+- A map literal can also be initialized with key-entry values as such:
+```go
+m := map[string]string{"Hello": "world", "foo": "bar"}
+```
+So, both make(map[string]string) and map[string]string{} would create an empty map, but map literals are more versatile
+as they can be used to initialize the map with key-entry pairs.
+
+In performance, both are practically the same when creating an empty map. But when initializing with data, using a map 
+literal can be more performant, because it creates an array of the right size from the start. If you use make and then 
+insert key-value pairs one by one into a map, the map may have to be resized and rehashed multiple times, resulting in a performance hit.
+
 ## Set
 In Golang, there is no built-in set data type, but we can use a map to simulate a set. 
 The keys of the map can represent the elements of the set, and you can use empty struct (struct{}) as map values since 
