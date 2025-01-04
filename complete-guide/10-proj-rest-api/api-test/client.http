@@ -63,3 +63,6 @@ Content-Type: application/json
   "location": "Singapore",
   "date_time": "2025-03-11T14:30:00.000Z"
 }
+
+### Delete event 3
+DELETE localhost:8080/events/3

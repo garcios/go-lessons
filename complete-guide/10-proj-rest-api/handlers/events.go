@@ -49,19 +49,13 @@ func getEvents(c *gin.Context) {
 
 func getEvent(c *gin.Context) {
 
-	eventID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	eventID, err := getEventID(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	event, err := models.GetEventByID(eventID)
+	event, err := retrieveEventOrError(c, eventID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, toJSON(err))
-		return
-	}
-
-	if event == nil {
-		c.JSON(http.StatusNotFound, toJSON(eventNotFoundError))
 		return
 	}
 
@@ -70,19 +64,13 @@ func getEvent(c *gin.Context) {
 
 func updateEvent(c *gin.Context) {
 
-	eventID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	eventID, err := getEventID(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	event, err := models.GetEventByID(eventID)
+	_, err = retrieveEventOrError(c, eventID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, toJSON(err))
-		return
-	}
-
-	if event == nil {
-		c.JSON(http.StatusNotFound, toJSON(eventNotFoundError))
 		return
 	}
 
@@ -103,4 +91,47 @@ func updateEvent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedEvent)
+}
+
+func retrieveEventOrError(c *gin.Context, eventID int64) (*models.Event, error) {
+	event, err := models.GetEventByID(eventID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+		return nil, err
+	}
+
+	if event == nil {
+		c.JSON(http.StatusNotFound, toJSON(eventNotFoundError))
+		return nil, eventNotFoundError
+	}
+
+	return event, nil
+}
+
+func getEventID(c *gin.Context) (int64, error) {
+	eventID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	return eventID, err
+}
+
+func deleteEvent(c *gin.Context) {
+	eventID, err := getEventID(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, toJSON(err))
+	}
+
+	event, err := retrieveEventOrError(c, eventID)
+	if err != nil {
+		// No need to set error in the context here because retrieveEventOrError has already done so.
+		return
+	}
+
+	event.ID = eventID
+
+	err = event.Delete()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
 }
