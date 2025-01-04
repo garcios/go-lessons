@@ -54,7 +54,7 @@ func getEvent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	event, err := retrieveEventOrError(c, eventID)
+	event, err := findEvent(c, eventID)
 	if err != nil {
 		return
 	}
@@ -69,7 +69,7 @@ func updateEvent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	_, err = retrieveEventOrError(c, eventID)
+	_, err = findEvent(c, eventID)
 	if err != nil {
 		return
 	}
@@ -93,7 +93,7 @@ func updateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedEvent)
 }
 
-func retrieveEventOrError(c *gin.Context, eventID int64) (*models.Event, error) {
+func findEvent(c *gin.Context, eventID int64) (*models.Event, error) {
 	event, err := models.GetEventByID(eventID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, toJSON(err))
@@ -119,9 +119,9 @@ func deleteEvent(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	event, err := retrieveEventOrError(c, eventID)
+	event, err := findEvent(c, eventID)
 	if err != nil {
-		// No need to set error in the context here because retrieveEventOrError has already done so.
+		// No need to set error in the context here because findEvent has already done so.
 		return
 	}
 
