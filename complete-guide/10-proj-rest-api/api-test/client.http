@@ -1,0 +1,65 @@
+
+### List events
+GET localhost:8080/events
+
+### Get event
+GET localhost:8080/events/1
+
+### Get event that does not exist
+GET localhost:8080/events/100
+
+
+### Create an event 1
+POST localhost:8080/events
+Content-Type: application/json
+
+{
+ "name": "PyConAU 2024",
+ "description": "Python Conference Melbourne 2024",
+ "location": "Melbourne Convention Center",
+ "date_time": "2025-01-01T15:30:00.000Z"
+}
+
+### Create an event 2
+POST localhost:8080/events
+Content-Type: application/json
+
+{
+  "name": "YOW! Melbourne",
+  "description": "Hotest technology and AI events in Melbourne",
+  "location": "Pullman Melbourne Albert Park",
+  "date_time": "2025-02-20T14:30:00.000Z"
+}
+
+### Create an event 3
+POST localhost:8080/events
+Content-Type: application/json
+
+{
+  "name": "Test event 3",
+  "description": "This is event 3",
+  "location": "Bendigo",
+  "date_time": "2025-03-10T14:30:00.000Z"
+}
+
+### Update event 3
+PUT localhost:8080/events/3
+Content-Type: application/json
+
+{
+  "name": "Test event 3",
+  "description": "This is event 3, updated",
+  "location": "Singapore",
+  "date_time": "2025-03-11T14:30:00.000Z"
+}
+
+### Update event that does not exist
+PUT localhost:8080/events/103
+Content-Type: application/json
+
+{
+  "name": "Test event 3",
+  "description": "This is event 3, updated",
+  "location": "Singapore",
+  "date_time": "2025-03-11T14:30:00.000Z"
+}
