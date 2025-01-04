@@ -60,5 +60,7 @@ func (fm FileManager) WriteResult(data interface{}) error {
 		return fmt.Errorf("failed to write JSON to file: %v", err)
 	}
 
+	fmt.Println("Created file " + fm.OutputFilePath)
+
 	return nil
 }

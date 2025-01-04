@@ -5,10 +5,15 @@ import (
 	filem "github.com/oskiegarcia/price-calculator/filemanager"
 	io "github.com/oskiegarcia/price-calculator/iomanager"
 	p "github.com/oskiegarcia/price-calculator/prices"
+	"sync"
 )
 
 func main() {
 	taxRates := []float64{0, 0.07, 0.10, 0.15}
+
+	var wg sync.WaitGroup
+
+	wg.Add(len(taxRates))
 
 	var iom io.IOManager
 	for _, taxRate := range taxRates {
@@ -18,10 +23,16 @@ func main() {
 		//iom = cmdmanager.New()
 
 		priceJob := p.NewTaxIncludedPriceJob(iom, taxRate)
-		err := priceJob.Process()
-		if err != nil {
-			fmt.Printf("Error processing price job: %v\n", err)
-			break
-		}
+
+		go func(job *p.TaxIncludedPriceJob) {
+			defer wg.Done()
+			err := job.Process()
+			if err != nil {
+				fmt.Printf("Error processing price job: %v\n", err)
+			}
+		}(priceJob)
+
 	}
+
+	wg.Wait()
 }

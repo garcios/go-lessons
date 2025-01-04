@@ -2,6 +2,7 @@ package prices
 
 import (
 	"fmt"
+	"time"
 
 	conv "github.com/oskiegarcia/price-calculator/conversion"
 	io "github.com/oskiegarcia/price-calculator/iomanager"
@@ -22,6 +23,8 @@ func NewTaxIncludedPriceJob(iom io.IOManager, taxRate float64) *TaxIncludedPrice
 }
 
 func (job *TaxIncludedPriceJob) Process() error {
+	fmt.Println("Processing TaxIncludedPriceJob for", job.TaxRate)
+
 	err := job.LoadData()
 	if err != nil {
 		return err
@@ -35,6 +38,9 @@ func (job *TaxIncludedPriceJob) Process() error {
 	}
 
 	job.TaxIncludedPrices = result
+
+	// simulate a slow process
+	time.Sleep(3 * time.Second)
 
 	return job.IOManager.WriteResult(job)
 }
