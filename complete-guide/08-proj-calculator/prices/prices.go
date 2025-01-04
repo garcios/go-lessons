@@ -42,6 +42,11 @@ func (job *TaxIncludedPriceJob) Process() error {
 	// simulate a slow process
 	time.Sleep(3 * time.Second)
 
+	// simulate an error
+	if job.TaxRate == 0.07 {
+		fmt.Println("returning error here...")
+		return fmt.Errorf("unable to process TaxIncludedPriceJob for tax rate %.2f", job.TaxRate)
+	}
 	return job.IOManager.WriteResult(job)
 }
 

@@ -12,8 +12,9 @@ func main() {
 	taxRates := []float64{0, 0.07, 0.10, 0.15}
 
 	var wg sync.WaitGroup
-
 	wg.Add(len(taxRates))
+
+	errChan := make(chan error, len(taxRates))
 
 	var iom io.IOManager
 	for _, taxRate := range taxRates {
@@ -27,12 +28,19 @@ func main() {
 		go func(job *p.TaxIncludedPriceJob) {
 			defer wg.Done()
 			err := job.Process()
-			if err != nil {
-				fmt.Printf("Error processing price job: %v\n", err)
-			}
+			errChan <- err
 		}(priceJob)
 
 	}
 
 	wg.Wait()
+	close(errChan)
+
+	// Handle any errors returned from the goroutines
+	for err := range errChan {
+		if err != nil {
+			fmt.Printf("Error processing price job: %v\n", err)
+		}
+	}
+
 }
