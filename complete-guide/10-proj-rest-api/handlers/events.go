@@ -3,13 +3,10 @@ package handlers
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/oskiegarcia/event-booking/models"
+	apperrors "github.com/oskiegarcia/event-booking/app-errors"
+	"github.com/oskiegarcia/event-booking/repositories"
 	"net/http"
 	"strconv"
-)
-
-var (
-	eventNotFoundError = errors.New("event not found")
 )
 
 func toJSON(err error) gin.H {
@@ -17,7 +14,7 @@ func toJSON(err error) gin.H {
 }
 
 func createEvent(c *gin.Context) {
-	var event models.Event
+	var event repositories.Event
 
 	err := c.ShouldBindJSON(&event)
 	if err != nil {
@@ -38,7 +35,7 @@ func createEvent(c *gin.Context) {
 
 func getEvents(c *gin.Context) {
 
-	events, err := models.GetAllEvents()
+	events, err := repositories.GetAllEvents()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return
@@ -74,7 +71,7 @@ func updateEvent(c *gin.Context) {
 		return
 	}
 
-	var updatedEvent models.Event
+	var updatedEvent repositories.Event
 	err = c.ShouldBindJSON(&updatedEvent)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, toJSON(err))
@@ -93,16 +90,16 @@ func updateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedEvent)
 }
 
-func findEvent(c *gin.Context, eventID int64) (*models.Event, error) {
-	event, err := models.GetEventByID(eventID)
+func findEvent(c *gin.Context, eventID int64) (*repositories.Event, error) {
+	event, err := repositories.GetEventByID(eventID)
 	if err != nil {
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(apperrors.EventNotFoundError))
+			return nil, err
+		}
+
 		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return nil, err
-	}
-
-	if event == nil {
-		c.JSON(http.StatusNotFound, toJSON(eventNotFoundError))
-		return nil, eventNotFoundError
 	}
 
 	return event, nil

@@ -1,8 +1,9 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	apperrors "github.com/oskiegarcia/event-booking/app-errors"
 	"github.com/oskiegarcia/event-booking/db"
 	"time"
 )
@@ -73,7 +74,7 @@ func GetEventByID(eventID int64) (*Event, error) {
 		&event.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
+			return nil, apperrors.EventNotFoundError
 		}
 
 		return nil, err
