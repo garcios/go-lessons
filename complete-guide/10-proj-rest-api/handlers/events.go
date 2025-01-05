@@ -9,10 +9,6 @@ import (
 	"strconv"
 )
 
-func toJSON(err error) gin.H {
-	return gin.H{"message": err.Error()}
-}
-
 func createEvent(c *gin.Context) {
 	var event repositories.Event
 
@@ -94,7 +90,7 @@ func findEvent(c *gin.Context, eventID int64) (*repositories.Event, error) {
 	event, err := repositories.GetEventByID(eventID)
 	if err != nil {
 		if errors.Is(err, apperrors.EventNotFoundError) {
-			c.JSON(http.StatusNotFound, toJSON(apperrors.EventNotFoundError))
+			c.JSON(http.StatusNotFound, toJSON(err))
 			return nil, err
 		}
 
@@ -130,5 +126,5 @@ func deleteEvent(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "event deleted successfully"})
 }
