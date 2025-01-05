@@ -23,6 +23,19 @@ This is a REST-API implementations for Event booking application which includes 
 - POST /login
   - Login and validate credentials
 
+
+
+### Registrations
+
+- POST /events/:id/register
+  - Register user for an event
+- DELETE /events/:id/register
+  - Cancel registration
+- GET /events/:id/register
+  - List registered users
+
+
+
 This application requires some packages which are described below.
 
 ## Gin Framewrok
