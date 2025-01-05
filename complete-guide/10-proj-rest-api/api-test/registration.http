@@ -1,0 +1,9 @@
+### Register for an event
+POST localhost:8080/events/2/register
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
+
+### Cancel registration
+DELETE localhost:8080/events/2/register
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
