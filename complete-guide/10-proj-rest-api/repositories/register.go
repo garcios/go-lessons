@@ -40,7 +40,7 @@ func (r *Registration) Save() error {
 }
 
 func (r *Registration) Delete() error {
-	query := `DELETE FROM registrations WHERE id = ?`
+	query := `DELETE FROM registrations WHERE user_id = ? AND event_id = ?`
 
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *Registration) Delete() error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(r.ID)
+	_, err = stmt.Exec(r.UserID, r.EventID)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,6 @@ func FindRegistrationByUserIDAndEventID(userID, eventID int64) (*Registration, e
 }
 
 func GetRegisteredUsersForEventID(eventID int64) ([]*RegisteredUser, error) {
-
 	query := `SELECT users.id, users.email FROM users JOIN registrations 
     ON users.id = registrations.user_id WHERE registrations.event_id = ?`
 

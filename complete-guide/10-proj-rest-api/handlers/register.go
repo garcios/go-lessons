@@ -86,8 +86,14 @@ func cancelRegistration(c *gin.Context) {
 		return
 	}
 
+	// check if user is registered for this event
 	registration, err := repositories.FindRegistrationByUserIDAndEventID(userID, eventID)
 	if err != nil {
+		if errors.Is(err, apperrors.RegistrationNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return
 	}
