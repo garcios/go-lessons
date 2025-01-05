@@ -13,8 +13,13 @@ type Registration struct {
 	UserID  int64 `json:"user_id"`
 }
 
+type RegisteredUser struct {
+	UserID int64  `json:"user_id"`
+	Email  string `json:"email"`
+}
+
 func (r *Registration) Save() error {
-	query := "INSERT INTO registrations (event_id, user_id) VALUES (?, ?)"
+	query := "INSERT INTO registrations (user_id, event_id) VALUES (?, ?)"
 
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
@@ -52,12 +57,15 @@ func (r *Registration) Delete() error {
 	return nil
 }
 
-func FindByUserIDAndEventID(userID, eventID int64) (*Registration, error) {
+func FindRegistrationByUserIDAndEventID(userID, eventID int64) (*Registration, error) {
 	query := `SELECT id FROM registrations WHERE user_id = ? AND event_id = ?`
 
 	row := db.DB.QueryRow(query, userID, eventID)
 
-	var registration Registration
+	registration := Registration{
+		UserID:  userID,
+		EventID: eventID,
+	}
 
 	err := row.Scan(&registration.ID)
 	if err != nil {
@@ -69,4 +77,39 @@ func FindByUserIDAndEventID(userID, eventID int64) (*Registration, error) {
 	}
 
 	return &registration, nil
+}
+
+func GetRegisteredUsersForEventID(eventID int64) ([]*RegisteredUser, error) {
+
+	query := `SELECT users.id, users.email FROM users JOIN registrations 
+    ON users.id = registrations.user_id WHERE registrations.event_id = ?`
+
+	rows, err := db.DB.Query(query, eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	registeredUsers := make([]*RegisteredUser, 0)
+
+	for rows.Next() {
+		var user RegisteredUser
+		err := rows.Scan(&user.UserID, &user.Email)
+		if err != nil {
+			return nil, err
+		}
+
+		registeredUsers = append(registeredUsers, &user)
+	}
+
+	if err = rows.Err(); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return registeredUsers, nil
+		}
+
+		return nil, err
+	}
+
+	return registeredUsers, nil
 }

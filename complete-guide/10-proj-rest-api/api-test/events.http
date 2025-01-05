@@ -36,7 +36,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFp
 ### Create an event 3
 POST localhost:8080/events
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFpbC5jb20iLCJleHAiOjE3MzYwNjIwMzYsInVzZXJJZCI6IjMifQ.9QPN2LZDU_WY0n9JdjWk4DLbUJ4mleyxx9M5sONEOSY
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFpbC5jb20iLCJleHAiOjE3MzYwNjk5MDgsInVzZXJJZCI6IjMifQ.BnwnP5EATB2Xm1sT7PctcbUvZX-dkHpVa-LWVaDto0A
 
 {
   "name": "Test event 3",

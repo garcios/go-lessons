@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	apperrors "github.com/oskiegarcia/event-booking/app-errors"
 	"github.com/oskiegarcia/event-booking/repositories"
@@ -10,17 +9,26 @@ import (
 	"strconv"
 )
 
+type UsersForEvent struct {
+	Event *repositories.Event            `json:"event"`
+	Users []*repositories.RegisteredUser `json:"users"`
+}
+
 func registerForEvent(c *gin.Context) {
-	fmt.Println("registerForEvent")
 	userID, eventID, err := getUserIDAndEventID(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, toJSON(err))
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return
 	}
 
 	var registration *repositories.Registration
 
-	registration, err = repositories.FindByUserIDAndEventID(userID, eventID)
+	registration, err = repositories.FindRegistrationByUserIDAndEventID(userID, eventID)
 	if err != nil && !errors.Is(err, apperrors.RegistrationNotFoundError) {
 		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return
@@ -53,12 +61,12 @@ func getUserIDAndEventID(c *gin.Context) (int64, int64, error) {
 		return 0, 0, err
 	}
 
-	eventID, err := getEventID(c)
+	eventID, err := getEventIDFromParam(c)
 	if err != nil {
 		return 0, 0, err
 	}
 
-	_, err = findEvent(c, eventID)
+	_, err = repositories.GetEventByID(eventID)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -67,14 +75,18 @@ func getUserIDAndEventID(c *gin.Context) (int64, int64, error) {
 }
 
 func cancelRegistration(c *gin.Context) {
-	fmt.Println("cancelRegistration")
 	userID, eventID, err := getUserIDAndEventID(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, toJSON(err))
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return
 	}
 
-	registration, err := repositories.FindByUserIDAndEventID(userID, eventID)
+	registration, err := repositories.FindRegistrationByUserIDAndEventID(userID, eventID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return
@@ -87,4 +99,37 @@ func cancelRegistration(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "registration cancelled successfully"})
+}
+
+func listRegisteredUsers(c *gin.Context) {
+	eventID, err := getEventIDFromParam(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, toJSON(err))
+		return
+	}
+
+	event, err := repositories.GetEventByID(eventID)
+	if err != nil {
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+		return
+	}
+
+	users, err := repositories.GetRegisteredUsersForEventID(eventID)
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+		return
+	}
+
+	usersForEvent := UsersForEvent{
+		Event: event,
+		Users: users,
+	}
+
+	c.JSON(http.StatusOK, usersForEvent)
 }

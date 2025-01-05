@@ -1,9 +1,23 @@
-### Register for an event
-POST localhost:8080/events/2/register
+### Register potter for event 1
+POST localhost:8080/events/1/register
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFpbC5jb20iLCJleHAiOjE3MzYwNjk5MDgsInVzZXJJZCI6IjMifQ.BnwnP5EATB2Xm1sT7PctcbUvZX-dkHpVa-LWVaDto0A
+
+### Register oskie for event 1
+POST localhost:8080/events/1/register
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA3MjAxNCwidXNlcklkIjoiMiJ9.epdOYQQWqOAGwQ_mOQE61VWdqAE2dBM1YibEKi4GPHg
+
 
 ### Cancel registration
-DELETE localhost:8080/events/2/register
+DELETE localhost:8080/events/1/register
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFpbC5jb20iLCJleHAiOjE3MzYwNjk5MDgsInVzZXJJZCI6IjMifQ.BnwnP5EATB2Xm1sT7PctcbUvZX-dkHpVa-LWVaDto0A
+
+### List registered users where event does not exist
+GET localhost:8080/events/5/register
+Content-Type: application/json
+
+### List registered users where event exists but no registered users
+GET localhost:8080/events/4/register
+Content-Type: application/json

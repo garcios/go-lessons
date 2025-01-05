@@ -53,13 +53,19 @@ func getEvents(c *gin.Context) {
 
 func getEvent(c *gin.Context) {
 
-	eventID, err := getEventID(c)
+	eventID, err := getEventIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	event, err := findEvent(c, eventID)
+	event, err := repositories.GetEventByID(eventID)
 	if err != nil {
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+		}
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+
 		return
 	}
 
@@ -68,13 +74,21 @@ func getEvent(c *gin.Context) {
 
 func updateEvent(c *gin.Context) {
 
-	eventID, err := getEventID(c)
+	eventID, err := getEventIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, toJSON(err))
+		return
 	}
 
-	_, err = findEvent(c, eventID)
+	_, err = repositories.GetEventByID(eventID)
 	if err != nil {
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+
 		return
 	}
 
@@ -97,35 +111,39 @@ func updateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedEvent)
 }
 
-func findEvent(c *gin.Context, eventID int64) (*repositories.Event, error) {
+func findEvent(eventID int64) (*repositories.Event, error) {
 	event, err := repositories.GetEventByID(eventID)
 	if err != nil {
 		if errors.Is(err, apperrors.EventNotFoundError) {
-			c.JSON(http.StatusNotFound, toJSON(err))
 			return nil, err
 		}
 
-		c.JSON(http.StatusInternalServerError, toJSON(err))
 		return nil, err
 	}
 
 	return event, nil
 }
 
-func getEventID(c *gin.Context) (int64, error) {
+func getEventIDFromParam(c *gin.Context) (int64, error) {
 	eventID, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	return eventID, err
 }
 
 func deleteEvent(c *gin.Context) {
-	eventID, err := getEventID(c)
+	eventID, err := getEventIDFromParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, toJSON(err))
 	}
 
-	event, err := findEvent(c, eventID)
+	event, err := repositories.GetEventByID(eventID)
 	if err != nil {
-		// No need to set error in the context here because findEvent has already done so.
+		if errors.Is(err, apperrors.EventNotFoundError) {
+			c.JSON(http.StatusNotFound, toJSON(err))
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+
 		return
 	}
 
