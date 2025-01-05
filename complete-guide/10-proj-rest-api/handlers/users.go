@@ -3,7 +3,9 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/oskiegarcia/event-booking/repositories"
+	"github.com/oskiegarcia/event-booking/utils"
 	"net/http"
+	"strconv"
 )
 
 func signUp(c *gin.Context) {
@@ -39,6 +41,12 @@ func login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	token, err := utils.GenerateToken(user.Email, strconv.Itoa(int(user.ID)))
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, toJSON(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": token})
 
 }

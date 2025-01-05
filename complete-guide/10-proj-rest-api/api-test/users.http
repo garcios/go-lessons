@@ -7,11 +7,30 @@ Content-Type: application/json
   "password": "Password123"
 }
 
-### login
+### Create an user 2
+POST localhost:8080/signup
+Content-Type: application/json
+
+{
+  "email": "potter@gmail.com",
+  "password": "Password123"
+}
+
+
+### login as oskie
 POST localhost:8080/login
 Content-Type: application/json
 
 {
   "email": "oskie@gmail.com",
+  "password": "Password123"
+}
+
+### login ad potter
+POST localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "potter@gmail.com",
   "password": "Password123"
 }

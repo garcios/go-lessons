@@ -29,6 +29,8 @@ This application requires some packages which are described below.
 Gin is a web framework written in Go (Golang). It features a martini-like API with much better performance, up to 40 
 times faster thanks to httprouter. If you need performance and good productivity, you will love Gin.
 
+https://gin-gonic.com/docs/
+
 ### How to install Gin package
 ```shell
 go get -u github.com/gin-gonic/gin

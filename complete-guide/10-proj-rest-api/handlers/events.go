@@ -18,7 +18,18 @@ func createEvent(c *gin.Context) {
 		return
 	}
 
-	event.UserID = 1
+	userID := c.GetString("userID")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, toJSON(apperrors.NotAuthorizedError))
+	}
+
+	parsedInt, err := strconv.ParseInt(userID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, toJSON(err))
+		return
+	}
+
+	event.UserID = parsedInt
 
 	err = event.Save()
 	if err != nil {

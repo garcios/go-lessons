@@ -12,6 +12,7 @@ GET localhost:8080/events/100
 ### Create an event 1
 POST localhost:8080/events
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
 
 {
  "name": "PyConAU 2024",
@@ -23,6 +24,7 @@ Content-Type: application/json
 ### Create an event 2
 POST localhost:8080/events
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFpbC5jb20iLCJleHAiOjE3MzYwNjIwMzYsInVzZXJJZCI6IjMifQ.9QPN2LZDU_WY0n9JdjWk4DLbUJ4mleyxx9M5sONEOSY
 
 {
   "name": "YOW! Melbourne",
@@ -34,6 +36,7 @@ Content-Type: application/json
 ### Create an event 3
 POST localhost:8080/events
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBvdHRlckBnbWFpbC5jb20iLCJleHAiOjE3MzYwNjIwMzYsInVzZXJJZCI6IjMifQ.9QPN2LZDU_WY0n9JdjWk4DLbUJ4mleyxx9M5sONEOSY
 
 {
   "name": "Test event 3",
@@ -45,6 +48,7 @@ Content-Type: application/json
 ### Update event 3
 PUT localhost:8080/events/3
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
 
 {
   "name": "Test event 3",
@@ -56,6 +60,7 @@ Content-Type: application/json
 ### Update event that does not exist
 PUT localhost:8080/events/103
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
 
 {
   "name": "Test event 3",
@@ -66,3 +71,4 @@ Content-Type: application/json
 
 ### Delete event 3
 DELETE localhost:8080/events/3
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9za2llQGdtYWlsLmNvbSIsImV4cCI6MTczNjA2MTI3NiwidXNlcklkIjoiMiJ9.GQ2kDzlPIHcaOP2rLkv4e8uG22KWTiRJkjXnj54hPgU
