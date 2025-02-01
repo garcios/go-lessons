@@ -19,12 +19,10 @@ type Fleet struct {
 }
 
 func (f *Fleet) Unmarshal(bytes []byte) error {
-	type FleetRaw struct {
+	fleet := &struct {
 		CityLocation string            `json:"city_location"`
 		Vehicles     []json.RawMessage `json:"vehicles"`
-	}
-
-	var fleet FleetRaw
+	}{}
 
 	err := json.Unmarshal(bytes, &fleet)
 	if err != nil {
@@ -35,16 +33,16 @@ func (f *Fleet) Unmarshal(bytes []byte) error {
 	f.Vehicles = make([]Vehicle, len(fleet.Vehicles))
 
 	for i, v := range fleet.Vehicles {
-		var Type struct {
+		vehicleType := &struct {
 			Type string `json:"type"`
-		}
+		}{}
 
-		err := json.Unmarshal(v, &Type)
+		err := json.Unmarshal(v, &vehicleType)
 		if err != nil {
 			return errors.New("missing Type attribute in vehicle")
 		}
 
-		switch Type.Type {
+		switch vehicleType.Type {
 		case "CAR":
 			var c Car
 			err := json.Unmarshal(v, &c)
